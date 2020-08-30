@@ -132,7 +132,7 @@ def main():
             print(e)
             bot.send_message(call.from_user.id, 'Что-то пошло не так...😟')
 
-    bot.polling(none_stop=True)
+    bot.infinity_polling(True)
 
 
 if __name__ == '__main__':
