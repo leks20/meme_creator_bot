@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import time
 from datetime import datetime
@@ -131,7 +132,7 @@ def main():
             print(e)
             bot.send_message(call.from_user.id, 'Что-то пошло не так...😟')
 
-    bot.infinity_polling(True)
+    bot.polling(none_stop=True)
 
 
 if __name__ == '__main__':
