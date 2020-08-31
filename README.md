@@ -42,15 +42,16 @@ pip install -r requirements.txt
 ```
 git clone https://github.com/leks20/meme_creator_bot
 ```
-2) В Dockerfile пропишите следующие переменные окружения:
+2) Создайте чат-бота Телеграм
+3) В Dockerfile пропишите следующие переменные окружения:
 - teleram_token
 - path_img (для тестирования используйте '/images')
 - path_collection (для тестирования используйте './collection.txt')
-3) Запустите сборку образа:
+4) Запустите сборку образа:
 ```
 docker build -t meme_creator .
 ```
-4) Запустите контейнер:
+5) Запустите контейнер:
 ```
 docker run -it -p 8000:8000 meme_creator
 ```
