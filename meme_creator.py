@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import random
+import textwrap
 import time
 from datetime import datetime
 
@@ -7,9 +9,8 @@ import pytz
 import requests
 import telebot
 from dotenv import load_dotenv
+from PIL import Image, ImageDraw, ImageFont
 from telebot import types
-
-import helper
 
 
 def main():
@@ -17,8 +18,38 @@ def main():
     load_dotenv()
     token = os.getenv('telegram_token')
     path_img = os.getenv('path_img')
+    path_collection = os.getenv('path_collection')
 
     bot = telebot.TeleBot(token, parse_mode='html')
+    
+    # функция, которая добавляет подпись к фото
+    def add_text(name):
+        try:
+            photo = Image.open(os.path.join(path_img, name))
+        except Exception as e:
+            print('При загрузке фотографии возникла ошибка: {}'.format(e))
+
+        idraw = ImageDraw.Draw(photo)
+        width, height = photo.size
+
+        # открыть сборник и выбрать рандомную подпись из списка
+        with open(path_collection, 'r') as file:
+            words_list = file.readlines()
+            text = words_list[random.randint(0, len(words_list) - 1)]
+
+        font = ImageFont.truetype('Lobster.ttf', size=75)
+
+        # установить максимально возможную ширину подписи
+        # и построчно разместить текст на фото
+        lines = textwrap.wrap(text, width=15)
+        for line in lines:
+            w, h = font.getsize(line)
+            idraw.text((
+                (width - w) / 2, height - 350
+                ), line, font=font, stroke_width=2, stroke_fill='black')
+            height += h
+
+        photo.save(os.path.join(path_img, name))
 
     # Приветственое сообщение от бота
     @bot.message_handler(commands=['start'])
@@ -53,9 +84,9 @@ def main():
         except Exception as e:
             print(e)
             bot.send_message(message.chat.id, 'Что-то пошло не так...😟')
-
-        # добавляем подпись к фото в модуле helper
-        helper.add_text(name)
+    
+        # добавляем подпись к фото
+        add_text(name)
 
         try:
             bot.send_message(
